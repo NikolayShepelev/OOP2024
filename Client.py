@@ -10,6 +10,27 @@ class ClientBase:
         self.address = address
         self.phone = phone
 
+    @staticmethod
+    def validate_client_id(client_id: int) -> bool:
+        return isinstance(client_id, int) and client_id > 0
+
+    @staticmethod
+    def validate_name(name: str) -> bool:
+        return bool(name and re.match(r"^[a-zA-Zа-яА-ЯёЁ\s-]+$", name))
+
+    @staticmethod
+    def validate_ownership_type(ownership_type: str) -> bool:
+        return bool(ownership_type and re.match(r"^[a-zA-Zа-яА-ЯёЁ\s-]+$", ownership_type))
+
+    @staticmethod
+    def validate_address(address: str) -> bool:
+        return bool(address and isinstance(address, str))
+
+    @staticmethod
+    def validate_phone(phone: str) -> bool:
+        pattern = re.compile(r"^8 \(\d{3}\) \d{3}-\d{2}-\d{2}$")
+        return bool(phone and pattern.match(phone))
+
     @property
     def client_id(self):
         return self.__client_id
@@ -27,7 +48,7 @@ class ClientBase:
     @name.setter
     def name(self, value: str):
         if not self.validate_name(value):
-            raise ValueError("Invalid name.")
+            raise ValueError("Неподходящее имя")
         self.__name = value
 
     @property
@@ -47,7 +68,7 @@ class ClientBase:
     @address.setter
     def address(self, value: str):
         if not self.validate_address(value):
-            raise ValueError("Invalid address.")
+            raise ValueError("Неподходящий адрес")
         self.__address = value
 
     @property
@@ -57,8 +78,23 @@ class ClientBase:
     @phone.setter
     def phone(self, value: str):
         if not self.validate_phone(value):
-            raise ValueError("Invalid phone number.")
+            raise ValueError("Неподходящий номер телефона")
         self.__phone = value
+
+    @classmethod
+    def create_new_client(cls, client_id: int, name: str, ownership_type: str, address: str, phone: str):
+        return cls(client_id=client_id, name=name, ownership_type=ownership_type, address=address, phone=phone)
+
+
+
+    def __str__(self):
+        return (f"Client {self.name}, ID: {self.client_id}, Ownership Type: {self.ownership_type}, "
+                f"Address: {self.address}, Phone: {self.phone}")
+
+    def __eq__(self, other):
+        if not isinstance(other, ClientBase):
+            return False
+        return self.phone == other.phone
 
 
 # Example usage
