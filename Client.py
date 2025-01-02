@@ -97,7 +97,45 @@ class ClientBase:
         return self.phone == other.phone
 
 
-# Example usage
+    @staticmethod
+    def from_string(client_str: str):
+        parts = client_str.split(',')
+        if len(parts) != 5:
+            raise ValueError("The string must contain 5 comma-separated elements.")
+        client_id = int(parts[0].strip())
+        name, ownership_type, address, phone = map(str.strip, parts[1:])
+        return ClientBase(client_id, name, ownership_type, address, phone)
+
+    @classmethod
+    def from_json(cls, json_str: str):
+        data = json.loads(json_str)
+        return cls(
+            client_id=data.get('client_id'),
+            name=data['name'],
+            ownership_type=data['ownership_type'],
+            address=data['address'],
+            phone=data['phone']
+        )
+
+    def to_json(self) -> str:
+        return json.dumps({
+            'client_id': self.client_id,
+            'name': self.name,
+            'ownership_type': self.ownership_type,
+            'address': self.address,
+            'phone': self.phone
+        }, ensure_ascii=False, indent=4)
+
+    def to_dict(self) -> dict:
+        return {
+            'client_id': self.client_id,
+            'name': self.name,
+            'ownership_type': self.ownership_type,
+            'address': self.address,
+            'phone': self.phone
+        }
+
+
 if __name__ == "__main__":
     client = ClientBase(
         client_id=1,
