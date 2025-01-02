@@ -113,10 +113,6 @@ class Client(ClientBase):
     def validate_address(address: str) -> bool:
         return bool(address and isinstance(address, str))
 
-    @staticmethod
-    def validate_contract_details(contract_details: str) -> bool:
-        return bool(contract_details and isinstance(contract_details, str))
-
     @property
     def ownership_type(self):
         return self.__ownership_type
@@ -137,29 +133,18 @@ class Client(ClientBase):
             raise ValueError("Invalid address.")
         self.__address = value
 
-
     def __str__(self):
         return (f"Client {self.name}, ID: {self.client_id}, Ownership Type: {self.ownership_type}, "
                 f"Address: {self.address}, Phone: {self.phone}")
 
-
-class ClientBrief(ClientBase):
-
-    def __init__(self, client_id: int, name: str, phone: str):
-        super().__init__(client_id, name, phone)
-
-    @classmethod
-    def from_client(cls, client: Client):
-        if not isinstance(client, Client):
-            raise TypeError("Argument must be an instance of Client.")
-        return cls(
-            client_id=client.client_id,
-            name=client.name,
-            phone=client.phone
-        )
-
-    def __str__(self):
-        return f"Client Brief: {self.name}, ID: {self.client_id}, Phone: {self.phone}"
+    def __eq__(self, other):
+        if not isinstance(other, Client):
+            return False
+        return (self.client_id == other.client_id and
+                self.name == other.name and
+                self.phone == other.phone and
+                self.ownership_type == other.ownership_type and
+                self.address == other.address)
 
 if __name__ == "__main__":
     client = Client(
